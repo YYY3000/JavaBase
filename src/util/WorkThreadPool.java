@@ -1,3 +1,5 @@
+package util;
+
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.ArrayList;
@@ -102,7 +104,7 @@ public class WorkThreadPool {
 
     public static void main(String[] args) {
         WorkThreadPool pool = new WorkThreadPool("test", 4, 8);
-        int [] arr = new int[]{1,2,3,4,5,6,7,8,9,10};
+        int[] arr = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         for (int i : arr) {
             pool.submit(() -> {
                 System.out.println(i);
