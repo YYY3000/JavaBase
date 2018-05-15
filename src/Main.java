@@ -20,25 +20,18 @@ public class Main {
     }
 
     public static void readFile(String path) {
-        path = "E:\\mastercom\\log\\clog.txt";
-        String writePath = "E:\\mastercom\\log\\clogfilter.txt";
+        path = "E:\\mastercom\\log\\firestrom.txt";
+        String writePath = "E:\\mastercom\\log\\firestormfilter.txt";
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             BufferedWriter writer = new BufferedWriter(new FileWriter(writePath));
-            int i = 0;
             String line = null;
-            do {
-                line = reader.readLine();
-                if (line == null || line.equals("")) {
-                    i++;
-                } else {
-                    if (line.contains("共入库") && !line.contains("共入库 0 条记录.另有 0 条无效记录被忽略.")) {
-                        writer.write(line.substring(line.indexOf("共入库"), line.length()));
-                        writer.newLine();
-                    }
-                    i = 0;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("共入库")) {
+                    writer.write(line.substring(line.indexOf("共入库"), line.length()));
+                    writer.newLine();
                 }
-            } while (i < 10);
+            }
             reader.close();
             writer.close();
         } catch (Exception e) {
