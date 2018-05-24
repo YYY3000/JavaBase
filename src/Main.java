@@ -1,13 +1,23 @@
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 public class Main {
 
     public static void main(String[] args) {
-        sum("E:\\mastercom\\log\\clog2共入库.txt");
-        //sum("E:\\mastercom\\log\\javalog2共入库.txt");
-        //sum("E:\\mastercom\\log\\36log共入库.txt");
-        //readFile("");
+        List<Integer> a = new ArrayList<>();
+        a.add(66);
+        IntStream intStream = a.stream().mapToInt((value) ->
+        {
+            return value.intValue();
+        });
+        int[] i = intStream.toArray();
+        for (int j : i) {
+            System.out.println(j);
+        }
     }
 
     public static void fileRename(String path) {

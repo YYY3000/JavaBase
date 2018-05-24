@@ -77,7 +77,7 @@ public class RsaCoder {
     /**
      * 公钥加密
      *
-     * @param content 加密内容
+     * @param content   加密内容
      * @param publicKey 公钥
      * @return 加密后的byte数组
      * @throws Exception
@@ -92,7 +92,7 @@ public class RsaCoder {
     /**
      * 公钥加密
      *
-     * @param data 加密内容
+     * @param data      加密内容
      * @param publicKey base64编码后的公钥串
      * @return base64编码后的加密串
      * @throws Exception
@@ -100,14 +100,14 @@ public class RsaCoder {
     public static String encrypt(String data, String publicKeyString) throws Exception {
         PublicKey publicKey = getPublicKey(publicKeyString);
         byte[] encryptedBytes = encrypt(data.getBytes(), publicKey);
-        String encryptedData = new String(Base64.getEncoder().encode(encryptedBytes));
+        String encryptedData = Base64.getEncoder().encodeToString(encryptedBytes);
         return encryptedData;
     }
 
     /**
      * 私钥解密
      *
-     * @param content 解密内容
+     * @param content    解密内容
      * @param privateKey 私钥
      * @return 解密后的byte数组
      * @throws Exception
@@ -122,7 +122,7 @@ public class RsaCoder {
     /**
      * 公钥加密
      *
-     * @param data 解密内容
+     * @param data             解密内容
      * @param privateKeyString base64编码后的私钥串
      * @return 解密串
      * @throws Exception
