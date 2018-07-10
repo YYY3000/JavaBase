@@ -42,10 +42,6 @@ public class BcpStore {
         return this.getSize() >= needFlushCount;
     }
 
-    public BcpStore() {
-
-    }
-
     public BcpStore(String strConn, String tableName) {
         this.init(strConn, tableName);
     }
@@ -70,7 +66,7 @@ public class BcpStore {
     private CachedRowSetImpl getCachedRowSet() {
         try {
             //查询出空值用于构建CachedRowSetImpl对象以省去列映射的步骤
-            String sql = "select * from " + m_tableName + " where 1 != 1";
+            String sql = "select * from " + m_tableName + " t where 1 != 1";
             ResultSet rs = SqlQuery.executeQuery(m_conn, sql);
             CachedRowSetImpl crs = new CachedRowSetImpl();
             // 缓存
@@ -111,7 +107,9 @@ public class BcpStore {
      */
     public boolean addData(Object... objs) {
         // 插入的参数必须与表的列数一致
-        if (objs.length != m_columnCount) return false;
+        if (objs.length != m_columnCount) {
+            return false;
+        }
 
         try {
             m_rowSet.last();
@@ -127,6 +125,7 @@ public class BcpStore {
             m_rowSet.moveToCurrentRow();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -145,6 +144,7 @@ public class BcpStore {
             this.clear();
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -157,6 +157,7 @@ public class BcpStore {
             try {
                 m_rowSet.release();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -169,6 +170,7 @@ public class BcpStore {
             try {
                 m_rowSet.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -180,15 +182,20 @@ public class BcpStore {
             try {
                 m_conn.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
 
     public static void main(String[] args) {
-        String strConn = "jdbc:sqlserver://localhost:1433;DatabaseName=test;user=test;password=test";
-        BcpStore store = new BcpStore(strConn, "test");
-        store.addData(1101, 28513, 17, 18, 13.0, null);
-        store.flush();
-        store.close();
+        try {
+            String strConn = "jdbc:sqlserver://192.168.1.49\\sql09;DatabaseName=MBD2_CITY_MAIN;user=dtauser;password=dtauser";
+            BcpStore store = new BcpStore(strConn, "test");
+            store.addData("年", "ssss");
+            store.flush();
+            store.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
