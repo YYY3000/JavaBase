@@ -94,7 +94,7 @@ public class TestJava8 {
 
         // 5 集合的stream
 
-        // 6 java.time
+        // 6 java.time (LocalTime LocalDate)
     }
 
     private static void testLambda(TestInterface test) {
