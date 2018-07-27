@@ -1,4 +1,4 @@
-package rsa;
+package encrypt;
 
 import javax.crypto.Cipher;
 import java.security.*;
