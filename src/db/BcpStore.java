@@ -136,7 +136,6 @@ public class BcpStore {
      * @return
      */
     public boolean flush() {
-        int count = getSize();
         try {
             // 写入数据库
             m_bulkCopy.writeToServer(m_rowSet);
@@ -191,7 +190,7 @@ public class BcpStore {
         try {
             String strConn = "jdbc:sqlserver://192.168.1.49\\sql09;DatabaseName=MBD2_CITY_MAIN;user=dtauser;password=dtauser";
             BcpStore store = new BcpStore(strConn, "test");
-            store.addData("年", "ssss");
+            store.addData("ssssssssssssssssssssssssssssssssssssss", "ssss");
             store.flush();
             store.close();
         } catch (Exception e) {

@@ -9,11 +9,12 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+
         <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>6.4.0.jre8</version>
+            <version>6.5.2.jre8-preview</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/log4j/log4j -->
