@@ -1,6 +1,8 @@
 package db;
 
 /**
+ * ResultSet处理接口
+ *
  * @author yinyiyun
  * @date 2018/5/2 10:32
  */
