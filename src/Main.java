@@ -1,15 +1,157 @@
-import java.io.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import db.MysqlUtil;
+
+import java.awt.Polygon;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.IntStream;
 
 public class Main {
 
-    public static void main(String[] args) {
+    private static Integer ratio = 10000000;
 
+    public static void main(String[] args) {
+//        MysqlUtil mysqlUtil = new MysqlUtil("192.168.1.60", "3306", "upos_city_main", "root", "mastercom168");
+////        try {
+////            mysqlUtil.executeQuery("SELECT g.* FROM tb_cfg_gis_city g WHERE g.CityName = '格尔木'", rs -> {
+////                while (rs.next()) {
+////                    byte[] pointShape = rs.getBytes("PointShape");
+////                    List<Double[]> json = getDoublePoints(pointShape);
+////                    System.out.println(JSONArray.toJSONString(json));
+////                }
+////            });
+////        } catch (Exception e) {
+////            e.printStackTrace();
+////        }
+        writeData();
+    }
+
+    private static int toInt32(byte[] b, int pos) {
+        return (b[pos + 0] & 0xFF) | ((b[pos + 1] & 0xFF) << 8) | ((b[pos + 2] & 0xFF) << 16)
+                | ((b[pos + 3] & 0xFF) << 24);
+    }
+
+    public static Polygon createPolygon(byte[] borderBytes) {
+        Polygon pg = new Polygon();
+
+        int pos = 0;
+        int lng = 0;
+        int lat = 0;
+        while (pos < borderBytes.length) {
+            lng = toInt32(borderBytes, pos);
+            pos += 4;
+
+            lat = toInt32(borderBytes, pos);
+            pos += 4;
+
+            pg.addPoint(lng, lat);
+        }
+
+        if (pg.npoints > 0) {
+            if ((pg.xpoints[0] != pg.xpoints[pg.npoints - 1]) || (pg.ypoints[0] != pg.ypoints[pg.npoints - 1])) {
+                pg.addPoint(pg.xpoints[0], pg.ypoints[0]);
+            }
+
+            pg.getBounds();
+
+            return pg;
+        } else {
+            return null;
+        }
+    }
+
+    public static List<Double[]> getDoublePoints(byte[] bytes) {
+        List<Double[]> ls = new ArrayList<>();
+        Polygon polygon = createPolygon(bytes);
+        if (null != polygon) {
+            int[] xpoints = polygon.xpoints;
+            int[] ypoints = polygon.ypoints;
+            for (int i = 0; i < polygon.npoints; i++) {
+                Double[] points = new Double[2];
+                points[0] = (double) xpoints[i] / ratio;
+                points[1] = (double) ypoints[i] / ratio;
+                ls.add(points);
+            }
+        }
+        return ls;
+    }
+
+    private static void writeData() {
+        MysqlUtil mysqlUtil = new MysqlUtil("192.168.1.60", "3306", "upos_city_main", "root", "mastercom168");
+        String sql = "INSERT INTO `upos_city_main`.`province_city_test`(`name`, `id`, `longitude`, `latitude`, `parentid`) VALUES (?, ?, ?, ?, ?)";
+
+        String path = "F:\\项目\\位置服务\\geometryProvince";
+        String json = readFile(path + "\\qinghai.json");
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONArray jsonArray = jsonObject.getJSONArray("features");
+        System.out.println(jsonArray);
+//        for (int i = 0; i < jsonArray.size(); i++) {
+//            JSONObject featuresObject = jsonArray.getJSONObject(i);
+//            JSONObject propertiesObject = featuresObject.getJSONObject("properties");
+//            String id = propertiesObject.getString("id");
+//            String name = propertiesObject.getString("name");
+//            if (name.contains("自治区")) {
+//                name = name.replace("自治区", "");
+//            }
+//            if (name.contains("省")) {
+//                name = name.replace("省", "");
+//            }
+//            if (name.contains("市")) {
+//                name = name.replace("市", "");
+//            }
+//            JSONArray cps = propertiesObject.getJSONArray("cp");
+//            Integer longitude = null;
+//            Integer latitude = null;
+//            if (cps != null) {
+//                longitude = (int) (cps.getDouble(0) * ratio);
+//                latitude = (int) (cps.getDouble(1) * ratio);
+//            }
+//            try {
+//                mysqlUtil.executeNonQuery(sql, name, id, longitude, latitude, "");
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//
+//            String cityJson = readFile(path + "\\" + id + ".json");
+//            JSONObject cityJsonObject = JSONObject.parseObject(cityJson);
+//            JSONArray cityJsonArray = cityJsonObject.getJSONArray("features");
+//            for (int i1 = 0; i1 < cityJsonArray.size(); i1++) {
+//                try {
+//                    JSONObject cityFeaturesObject = cityJsonArray.getJSONObject(i1);
+//                    JSONObject cityPropertiesObject = cityFeaturesObject.getJSONObject("properties");
+//                    String cityId = cityPropertiesObject.getString("id");
+//                    String cityName = cityPropertiesObject.getString("name");
+//                    if (cityName.contains("市")) {
+//                        cityName = cityName.replace("市", "");
+//                    }
+//                    if (cityName.contains("地区")) {
+//                        cityName = cityName.replace("地区", "");
+//                    }
+//                    if (cityName.contains("区")) {
+//                        cityName = cityName.replace("区", "");
+//                    }
+//                    if (cityName.contains("自治州")) {
+//                        cityName = cityName.replace("自治州", "");
+//                    }
+//                    JSONArray cityCps = cityPropertiesObject.getJSONArray("cp");
+//                    Integer cityLongitude = null;
+//                    Integer cityLatitude = null;
+//                    if (cityCps != null) {
+//                        cityLongitude = (int) (cityCps.getDouble(0) * ratio);
+//                        cityLatitude = (int) (cityCps.getDouble(1) * ratio);
+//                    }
+//                    mysqlUtil.executeNonQuery(sql, cityName, cityId, cityLongitude, cityLatitude, id);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     public static void fileRename(String path) {
@@ -25,36 +167,20 @@ public class Main {
         }
     }
 
-    public static void readFile(String path) {
-        path = "E:\\mastercom\\log\\clog2.txt";
-        String writePath = "E:\\mastercom\\log\\clog2共入库.txt";
-        Map<String, Integer> sumMap = new HashMap<>();
+    public static String readFile(String path) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(writePath));
+            StringBuffer sb = new StringBuffer();
             String line = null;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("共入库") && !line.contains(" 0 条记录")) {
-                    writer.write(line.substring(line.indexOf("共入库")));
-                    writer.newLine();
-//                    String tableName = line.substring(line.indexOf("上午12:00") + 7, line.indexOf(":==缩放级别"));
-//                    int count = Integer.valueOf(line.substring(line.indexOf("共入库 ") + 4, line.indexOf(" 条记录")).replace(",", ""));
-//                    if (sumMap.containsKey(tableName)) {
-//                        sumMap.put(tableName, sumMap.get(tableName) + count);
-//                    } else {
-//                        sumMap.put(tableName, 0);
-//                    }
-                }
+                sb.append(line);
             }
             reader.close();
-//            for (Map.Entry<String, Integer> entry : sumMap.entrySet()) {
-//                writer.write("表 " + entry.getKey() + " 共入库 " + entry.getValue() + " 条记录");
-//                writer.newLine();
-//            }
-            writer.close();
+            return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static void sum(String path) {
@@ -105,6 +231,7 @@ public class Main {
 
     /**
      * 数字自动补0
+     *
      * @param num
      */
     public static void format(int num) {
