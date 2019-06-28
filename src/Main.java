@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -16,19 +18,30 @@ public class Main {
     private static Integer ratio = 10000000;
 
     public static void main(String[] args) {
-//        MysqlUtil mysqlUtil = new MysqlUtil("192.168.1.60", "3306", "upos_city_main", "root", "mastercom168");
-////        try {
-////            mysqlUtil.executeQuery("SELECT g.* FROM tb_cfg_gis_city g WHERE g.CityName = '格尔木'", rs -> {
-////                while (rs.next()) {
-////                    byte[] pointShape = rs.getBytes("PointShape");
-////                    List<Double[]> json = getDoublePoints(pointShape);
-////                    System.out.println(JSONArray.toJSONString(json));
-////                }
-////            });
-////        } catch (Exception e) {
-////            e.printStackTrace();
-////        }
-        writeData();
+        HashMap map = new HashMap();
+        String s1 = "1";
+        String s2 = "2";
+        Test t1 = new Test(1, "1");
+        Test t2 = new Test(2, "2");
+        map.put(s1, t1);
+        map.put(s2, t2);
+        System.gc();
+        System.out.println("第1步" + map);
+
+        s1= null;
+        System.gc();
+        System.out.println("第2步" + map);
+
+        map.clear();
+        System.gc();
+        System.out.println("第3步" + map);
+        System.out.println("第3步" + t1);
+        System.out.println("第3步" + t2);
+
+        map = null;
+        System.gc();
+        System.out.println("第3步" + t1);
+        System.out.println("第3步" + t2);
     }
 
     private static int toInt32(byte[] b, int pos) {
