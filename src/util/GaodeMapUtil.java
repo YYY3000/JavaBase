@@ -1,3 +1,5 @@
+package util;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.client.fluent.Request;
@@ -8,7 +10,7 @@ import java.io.IOException;
  * @author yinyiyun
  * @date 2019/5/8 11:28
  */
-public class GaodeMap {
+public class GaodeMapUtil {
 
     private static final String AREASHAPE_URL = "http://restapi.amap.com/v3/config/district?key=77441ed52a769b39a5201731c6374a7b&subdistrict=1&extensions=all&keywords=";
 
@@ -33,6 +35,8 @@ public class GaodeMap {
         return null;
     }
 
+    public static void main(String[] args) {
 
+    }
 
 }

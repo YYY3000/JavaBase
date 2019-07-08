@@ -1,3 +1,5 @@
+package util;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.client.fluent.Request;
@@ -15,7 +17,7 @@ import java.util.Map;
  * @author yinyiyun
  * @date 2019/5/8 11:28
  */
-public class BaiduMap {
+public class BaiduMapUtil {
 
     private static final String ADDRESS_URL = "http://api.map.baidu.com/place/v2/search?region=北京&output=json&ak=42b8ececa9cd6fe72ae4cddd77c0da5d&query=";
 
